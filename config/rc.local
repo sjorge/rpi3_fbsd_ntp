@@ -1,0 +1,11 @@
+#!/bin/sh
+
+export PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/sbin:/usr/local/bin:/root/bin
+
+## configure GPS
+echo -n "## Boottime - " > /var/log/boot_gps.log
+date >> /var/log/boot_gps.log
+screen -dmS ubxcfg script -qa /var/log/boot_gps.log /root/ubxcfg/startup.py
+
+## enable led0 on boot
+echo 1 > /dev/led/led0
