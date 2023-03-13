@@ -3,6 +3,7 @@
 export PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/sbin:/usr/local/bin:/root/bin
 
 ## configure GPS
+sleep 30
 echo -n "## Boottime - " > /var/log/boot_gps.log
 date >> /var/log/boot_gps.log
 screen -dmS ubxcfg script -qa /var/log/boot_gps.log /root/ubxcfg/startup.py

@@ -85,7 +85,7 @@ if __name__ == '__main__':
     dev_mapping = [
         ("pps0", "gpiopps0", None),
         ("gps0", "cuau0", 9600),
-        ("gps1", "cuaU0", 4800),
+        ("gps1", "cuaU0", 9600),
     ]
     for dst, src, baudrate in dev_mapping:
         sys.stdout.write("[>>] Configuring devfs for {} ...".format(dst))
@@ -106,6 +106,7 @@ if __name__ == '__main__':
                 with open(devfs_cfg, "a") as devfs_fd:
                     devfs_fd.write("link\t{}\t{}\n".format(src, dst))
                 dev_setup = simple_exec("/etc/rc.d/devfs restart")
+                sleep(5)
 
         sys.stdout.write("\r[OK]\n" if dev_setup else "\r[!!]\n")
 
@@ -190,7 +191,8 @@ if __name__ == '__main__':
         # NOTE: configure MSG
         cfg_nmea_opts = [
             ("NMEA_GGA", [1, 1, 0, 1, 1, 0]),
-            ("NMEA_ZDA", [1, 1, 0, 1, 1, 0]),
+            ("NMEA_ZDA", [1, 0, 0, 0, 0, 0]),
+            #("NMEA_ZDA", [1, 1, 0, 1, 1, 0]),
             ("NMEA_GLL", [0, 0, 0, 0, 0, 0]),
             ("NMEA_GSA", [1, 0, 0, 0, 0, 0]),
             ("NMEA_GSV", [0, 0, 0, 0, 0, 0]),
