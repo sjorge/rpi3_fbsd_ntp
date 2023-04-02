@@ -1,4 +1,4 @@
-#!/usr/local/bin/python2.7
+#!/usr/local/bin/python3.9
 
 ####
 ## ublox startup configuration
@@ -66,7 +66,13 @@ def _set_config(gps, cfg, verify=True):
                 else:
                     # NOTE: UBX-CFG-MSG is special
                     cfg_new = _get_config(gps, cfg_class, cfg_msg, struct.pack('<BB', 0xf0, cfg.msgId))
-                cfg_new.unpack()
+                if cfg_new:
+                    cfg_new.unpack()
+                # FIXME
+                #print("\nDEBUG_START")
+                #print(cfg)
+                #print(cfg_new)
+                #print("DEBUG_STOP")
                 return str(cfg) == str(cfg_new)
             elif res and res.msg_type() == (ublox.CLASS_ACK, ublox.MSG_ACK_NACK):
                 return False
@@ -124,7 +130,7 @@ if __name__ == '__main__':
         sys.stdout.write("[II] {} is running hwVersion {}\n".format(dst, hwver))
 
         # NOTE: configure PMS
-        if hwver >= 8:
+        if hwver >= 56:
             sys.stdout.write("[>>] Configuring PMS for {} ...".format(dst))
             cfg_pms = _get_config(gps, ublox.CLASS_CFG, ublox.MSG_CFG_PMS)
             if cfg_pms:
@@ -160,7 +166,7 @@ if __name__ == '__main__':
         sys.stdout.write("\r[OK]\n" if cfg_sbas and res_sbas else "\r[!!]\n")
 
         # NOTE: configure GNSS
-        if hwver >= 8:
+        if hwver >= 56:
             sys.stdout.write("[>>] Configuring GNSS for {} ...".format(dst))
             cfg_gnss = _get_config(gps, ublox.CLASS_CFG, ublox.MSG_CFG_GNSS)
             if cfg_gnss:
@@ -206,7 +212,7 @@ if __name__ == '__main__':
         cfg_nmea_opts.extend([
             ("NMEA_GNS", [1, 0, 0, 0, 0, 0]),
             ("NMEA_VLW", [0, 0, 0, 0, 0, 0]),
-        ] if hwver >= 8 else [])
+        ] if hwver >= 56 else [])
         cfg_nmea = _get_config(gps, ublox.CLASS_CFG, ublox.MSG_CFG_MSG,
                                struct.pack('<BB', 0xf0, ublox.MSG_CFG_MSG_NMEA_GGA))
         for (msgId, rates) in cfg_nmea_opts:

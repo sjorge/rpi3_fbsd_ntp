@@ -209,7 +209,7 @@ class UBloxAttrDict(dict):
             raise AttributeError(name)
 
     def __setattr__(self, name, value):
-        if self.__dict__.has_key(name):
+        if name in self.__dict__:
             # allow set on normal attributes
             dict.__setattr__(self, name, value)
         else:
@@ -278,7 +278,7 @@ class UBloxDescriptor:
             return
 
         size2 = struct.calcsize(self.format2)
-        for c in range(count):
+        for c in range(int(count)):
             r = UBloxAttrDict()
             if size2 > len(buf):
                 raise UBloxError("INVALID_SIZE=%u, " % len(buf))
@@ -298,7 +298,7 @@ class UBloxDescriptor:
             msg_class = msg.msg_class()
         if msg_id is None:
             msg_id = msg.msg_id()
-        msg._buf = ''
+        msg._buf = bytes()
 
         fields = self.fields[:]
         for f in fields:
@@ -362,30 +362,30 @@ class UBloxDescriptor:
 
 # list of supported message types.
 msg_types = {
-    (CLASS_ACK, MSG_ACK_ACK)    : UBloxDescriptor('ACK_ACK',
+    (CLASS_ACK, MSG_ACK_ACK): UBloxDescriptor('ACK_ACK',
                                                   '<BB',
                                                   ['clsID', 'msgID']),
-    (CLASS_ACK, MSG_ACK_NACK)   : UBloxDescriptor('ACK_NACK',
+    (CLASS_ACK, MSG_ACK_NACK): UBloxDescriptor('ACK_NACK',
                                                   '<BB',
                                                   ['clsID', 'msgID']),
-    (CLASS_CFG, MSG_CFG_USB)    : UBloxDescriptor('CFG_USB',
+    (CLASS_CFG, MSG_CFG_USB): UBloxDescriptor('CFG_USB',
                                                   '<HHHHHH32s32s32s',
                                                   ['vendorID', 'productID', 'reserved1', 'reserved2', 'powerConsumption',
                                                    'flags', 'vendorString', 'productString', 'serialNumber']),
-    (CLASS_CFG, MSG_CFG_PRT)    : UBloxDescriptor('CFG_PRT',
+    (CLASS_CFG, MSG_CFG_PRT): UBloxDescriptor('CFG_PRT',
                                                   '<BBHIIHHHH',
                                                   ['portID', 'reserved0', 'txReady', 'mode', 'baudRate', 'inProtoMask',
                                                    'outProtoMask', 'reserved4', 'reserved5']),
-    (CLASS_CFG, MSG_CFG_CFG)    : UBloxDescriptor('CFG_CFG',
+    (CLASS_CFG, MSG_CFG_CFG): UBloxDescriptor('CFG_CFG',
                                                   '<III,B',
                                                   ['clearMask', 'saveMask', 'loadMask', 'deviceMask']),
-    (CLASS_CFG, MSG_CFG_RST)    : UBloxDescriptor('CFG_RST',
+    (CLASS_CFG, MSG_CFG_RST): UBloxDescriptor('CFG_RST',
                                                   '<HBB',
                                                   ['navBbrMask ', 'resetMode', 'reserved1']),
-    (CLASS_CFG, MSG_CFG_SBAS)   : UBloxDescriptor('CFG_SBAS',
+    (CLASS_CFG, MSG_CFG_SBAS): UBloxDescriptor('CFG_SBAS',
                                                   '<BBBBI',
                                                   ['mode', 'usage', 'maxSBAS', 'scanmode2', 'scanmode1']),
-    (CLASS_CFG, MSG_CFG_GNSS)   : UBloxDescriptor('CFG_GNSS',
+    (CLASS_CFG, MSG_CFG_GNSS): UBloxDescriptor('CFG_GNSS',
                                                   '<BBBBBBBBIBBBBIBBBBIBBBBIBBBBIBBBBIBBBBI',
                                                   ['msgVer', 'numTrkChHw', 'numTrkChUse', 'numConfigBlocks',
                                                    'gnssId0', 'resTrkCh0', 'maxTrkCh0', 'resetved0', 'flags0',
@@ -396,52 +396,52 @@ msg_types = {
                                                    'gnssId5', 'resTrkCh5', 'maxTrkCh5', 'resetved5', 'flags5',
                                                    'gnssId6', 'resTrkCh6', 'maxTrkCh6', 'resetved6', 'flags6',
                                                   ]),
-    (CLASS_CFG, MSG_CFG_RATE)   : UBloxDescriptor('CFG_RATE',
+    (CLASS_CFG, MSG_CFG_RATE): UBloxDescriptor('CFG_RATE',
                                                   '<HHH',
                                                   ['measRate', 'navRate', 'timeRef']),
-    (CLASS_CFG, MSG_CFG_MSG)    : UBloxDescriptor('CFG_MSG',
+    (CLASS_CFG, MSG_CFG_MSG): UBloxDescriptor('CFG_MSG',
                                                   '<BB6B',
                                                   ['msgClass', 'msgId', 'rates[6]']),
-    (CLASS_NAV, MSG_NAV_POSLLH) : UBloxDescriptor('NAV_POSLLH',
+    (CLASS_NAV, MSG_NAV_POSLLH): UBloxDescriptor('NAV_POSLLH',
                                                   '<IiiiiII',
                                                   ['iTOW', 'Longitude', 'Latitude', 'height', 'hMSL', 'hAcc', 'vAcc']),
-    (CLASS_NAV, MSG_NAV_VELNED) : UBloxDescriptor('NAV_VELNED',
+    (CLASS_NAV, MSG_NAV_VELNED): UBloxDescriptor('NAV_VELNED',
                                                   '<IiiiIIiII',
                                                   ['iTOW', 'velN', 'velE', 'velD', 'speed', 'gSpeed', 'heading',
                                                    'sAcc', 'cAcc']),
-    (CLASS_NAV, MSG_NAV_DOP)    : UBloxDescriptor('NAV_DOP',
+    (CLASS_NAV, MSG_NAV_DOP): UBloxDescriptor('NAV_DOP',
                                                   '<IHHHHHHH',
                                                   ['iTOW', 'gDOP', 'pDOP', 'tDOP', 'vDOP', 'hDOP', 'nDOP', 'eDOP']),
-    (CLASS_NAV, MSG_NAV_STATUS) : UBloxDescriptor('NAV_STATUS',
+    (CLASS_NAV, MSG_NAV_STATUS): UBloxDescriptor('NAV_STATUS',
                                                   '<IBBBBII',
                                                   ['iTOW', 'gpsFix', 'flags', 'fixStat', 'flags2', 'ttff', 'msss']),
-    (CLASS_NAV, MSG_NAV_SOL)    : UBloxDescriptor('NAV_SOL',
+    (CLASS_NAV, MSG_NAV_SOL): UBloxDescriptor('NAV_SOL',
                                                   '<IihBBiiiIiiiIHBBI',
                                                   ['iTOW', 'fTOW', 'week', 'gpsFix', 'flags', 'ecefX', 'ecefY', 'ecefZ',
                                                    'pAcc', 'ecefVX', 'ecefVY', 'ecefVZ', 'sAcc', 'pDOP', 'reserved1',
                                                    'numSV', 'reserved2']),
-    (CLASS_NAV, MSG_NAV_PVT)	: UBloxDescriptor('NAV_PVT',
+    (CLASS_NAV, MSG_NAV_PVT): UBloxDescriptor('NAV_PVT',
     											  '<IHBBBBBBIiBBBBiiiiIIiiiiiIIH6Bi4B',
                                               	  ['iTOW', 'year', 'month', 'day', 'hour', 'min', 'sec', 'valid',
                                                	   'tAcc', 'nano', 'fixType', 'flags', 'flags2', 'numSV', 'lon',
                                                    'lat', 'height', 'hMSL', 'hAcc', 'vAcc', 'velN', 'velE', 'velD', 'gSpeed',
                                                    'headMot', 'sAcc', 'headAcc', 'pDOP', 'reserved1[6]', 'headVeh', 'reserved2[4]']),
-    (CLASS_NAV, MSG_NAV_ORB)	: UBloxDescriptor('NAV_ORB',
+    (CLASS_NAV, MSG_NAV_ORB): UBloxDescriptor('NAV_ORB',
                                  	              '<IBBBB',
                                                   ['iTOW', 'version', 'numSv', 'reserved01', 'reserved02'],
                                          	       'numSv',
                                                   'BBBBBB',
                                                   ['gnssId', 'svId', 'svFlag', 'eph', 'alm', 'otherOrb']),
-    (CLASS_NAV, MSG_NAV_SAT)	: UBloxDescriptor('NAV_SAT',
+    (CLASS_NAV, MSG_NAV_SAT): UBloxDescriptor('NAV_SAT',
                                                   '<IBBBB',
                                                   ['iTOW', 'version', 'numSvs', 'reserved01', 'reserved02'],
                                                    'numSvs',
                                                   'BBBbhhi',
                                                   ['gnssId', 'svId', 'cno', 'elev', 'azim', 'prRes', 'flags']),
-    (CLASS_NAV, MSG_NAV_POSUTM) : UBloxDescriptor('NAV_POSUTM',
+    (CLASS_NAV, MSG_NAV_POSUTM): UBloxDescriptor('NAV_POSUTM',
                                                   '<Iiiibb',
                                                   ['iTOW', 'East', 'North', 'Alt', 'Zone', 'Hem']),
-    (CLASS_NAV, MSG_NAV_SBAS)   : UBloxDescriptor('NAV_SBAS',
+    (CLASS_NAV, MSG_NAV_SBAS): UBloxDescriptor('NAV_SBAS',
                                                   '<IBBbBBBBB',
                                                   ['iTOW', 'geo', 'mode', 'sys', 'service', 'cnt', 'reserved01', 'reserved02', 'reserved03' ],
                                                   'cnt',
@@ -463,74 +463,74 @@ msg_types = {
     (CLASS_NAV, MSG_NAV_TIMEGAL): UBloxDescriptor('NAV_TIMEGAL',
                                                   '<IIihbBI',
                                                   ['iTOW', 'galTow', 'fGalTow', 'galWno', 'leaps', 'valid', 'tAcc', 'min', 'sec', 'valid']),
-    (CLASS_NAV, MSG_NAV_CLOCK)  : UBloxDescriptor('NAV_CLOCK',
+    (CLASS_NAV, MSG_NAV_CLOCK): UBloxDescriptor('NAV_CLOCK',
                                                   '<IiiII',
                                                   ['iTOW', 'clkB', 'clkD', 'tAcc', 'fAcc']),
-    (CLASS_NAV, MSG_NAV_DGPS)   : UBloxDescriptor('NAV_DGPS',
+    (CLASS_NAV, MSG_NAV_DGPS): UBloxDescriptor('NAV_DGPS',
                                                   '<IihhBBH',
                                                   ['iTOW', 'age', 'baseId', 'baseHealth', 'numCh', 'status', 'reserved1'],
                                                   'numCh',
                                                   '<BBHff',
                                                   ['svid', 'flags', 'ageC', 'prc', 'prrc']),
-    (CLASS_NAV, MSG_NAV_SVINFO) : UBloxDescriptor('NAV_SVINFO',
+    (CLASS_NAV, MSG_NAV_SVINFO): UBloxDescriptor('NAV_SVINFO',
                                                   '<IBBH',
                                                   ['iTOW', 'numCh', 'globalFlags', 'reserved2'],
                                                   'numCh',
                                                   '<BBBBBbhi',
                                                   ['chn', 'svid', 'flags', 'quality', 'cno', 'elev', 'azim', 'prRes']),
-    (CLASS_RXM, MSG_RXM_SVSI)   : UBloxDescriptor('RXM_SVSI',
+    (CLASS_RXM, MSG_RXM_SVSI): UBloxDescriptor('RXM_SVSI',
                                                   '<IhBB',
                                                   ['iTOW', 'week', 'numVis', 'numSV'],
                                                   'numSV',
                                                   '<BBhbB',
                                                   ['svid', 'svFlag', 'azim', 'elev', 'age']),
-    (CLASS_RXM, MSG_RXM_EPH)    : UBloxDescriptor('RXM_EPH',
+    (CLASS_RXM, MSG_RXM_EPH): UBloxDescriptor('RXM_EPH',
                                                   '<II , 8I 8I 8I',
                                                   ['svid', 'how',
                                                    'sf1d[8]', 'sf2d[8]', 'sf3d[8]']),
-    (CLASS_AID, MSG_AID_EPH)    : UBloxDescriptor('AID_EPH',
+    (CLASS_AID, MSG_AID_EPH): UBloxDescriptor('AID_EPH',
                                                   '<II , 8I 8I 8I',
                                                   ['svid', 'how',
                                                    'sf1d[8]', 'sf2d[8]', 'sf3d[8]']),
-    (CLASS_AID, MSG_AID_AOP)    : UBloxDescriptor('AID_AOP',
+    (CLASS_AID, MSG_AID_AOP): UBloxDescriptor('AID_AOP',
                                                   '<B47B , 48B 48B 48B',
                                                   ['svid', 'data[47]', 'optional0[48]', 'optional1[48]', 'optional1[48]']),
-    (CLASS_RXM, MSG_RXM_RAW)   : UBloxDescriptor('RXM_RAW',
+    (CLASS_RXM, MSG_RXM_RAW): UBloxDescriptor('RXM_RAW',
                                                   '<ihBB',
                                                   ['iTOW', 'week', 'numSV', 'reserved1'],
                                                   'numSV',
                                                   '<ddfBbbB',
                                                   ['cpMes', 'prMes', 'doMes', 'sv', 'mesQI', 'cno', 'lli']),
-    (CLASS_RXM, MSG_RXM_RAWX)	: UBloxDescriptor('RXM_RAWX',
+    (CLASS_RXM, MSG_RXM_RAWX): UBloxDescriptor('RXM_RAWX',
                                                   '<dHbBB3B',
                                                   ['rcvTow', 'week', 'leapS', 'numMeas', 'recStat', 'reserved1[3]'],
                                                    'numMeas',
                                                   '<ddfBBBBHBBBBBB',
                                                   ['prMes', 'cpMes', 'doMes', 'gnssId', 'svId', 'reserved2', 'freqId',
                                                    'locktime', 'cno', 'prStdev', 'cpStdev', 'doStdev', 'trkStat', 'reserved3']),
-    (CLASS_RXM, MSG_RXM_SFRBX)	: UBloxDescriptor('RXM_SFRBX',
+    (CLASS_RXM, MSG_RXM_SFRBX): UBloxDescriptor('RXM_SFRBX',
                                                   '<BBBBBBBB',
                                                   ['gnssId', 'svid', 'reserved1', 'freqId', 'numWords', 'reserved2', 'version', 'reserved3'],
                                                    'numWords',
                                                   '<L',
                                                   ['dwrd']),
-    (CLASS_RXM, MSG_RXM_SFRB)  : UBloxDescriptor('RXM_SFRB',
+    (CLASS_RXM, MSG_RXM_SFRB): UBloxDescriptor('RXM_SFRB',
                                                   '<BB10I',
                                                   ['chn', 'svid', 'dwrd[10]']),
-    (CLASS_AID, MSG_AID_ALM)   : UBloxDescriptor('AID_ALM',
+    (CLASS_AID, MSG_AID_ALM): UBloxDescriptor('AID_ALM',
                                                   '<II',
                                                  '_remaining',
                                                  'I',
                                                  ['dwrd']),
-    (CLASS_RXM, MSG_RXM_ALM)   : UBloxDescriptor('RXM_ALM',
+    (CLASS_RXM, MSG_RXM_ALM): UBloxDescriptor('RXM_ALM',
                                                   '<II , 8I',
                                                   ['svid', 'week', 'dwrd[8]']),
-    (CLASS_CFG, MSG_CFG_NAV5)   : UBloxDescriptor('CFG_NAV5',
+    (CLASS_CFG, MSG_CFG_NAV5): UBloxDescriptor('CFG_NAV5',
                                                   '<HBBiIbBHHHHBBIII',
                                                   ['mask', 'dynModel', 'fixMode', 'fixedAlt', 'fixedAltVar', 'minElev',
                                                    'drLimit', 'pDop', 'tDop', 'pAcc', 'tAcc', 'staticHoldThresh',
                                                    'dgpsTimeOut', 'reserved2', 'reserved3', 'reserved4']),
-    (CLASS_CFG, MSG_CFG_NAVX5)   : UBloxDescriptor('CFG_NAVX5',
+    (CLASS_CFG, MSG_CFG_NAVX5): UBloxDescriptor('CFG_NAVX5',
                                                   '<HHIBBBBBBBBBBHIBBBBBBHII',
                                                   ['version', 'mask1', 'reserved0', 'reserved1', 'reserved2',
                                                    'minSVs', 'maxSVs', 'minCNO', 'reserved5', 'iniFix3D',
@@ -538,45 +538,45 @@ msg_types = {
                                                    'reserved9', 'reserved10', 'reserved11',
                                                    'usePPP', 'useAOP', 'reserved12', 'reserved13',
                                                    'aopOrbMaxErr', 'reserved3', 'reserved4']),
-    (CLASS_MON, MSG_MON_HW)     : UBloxDescriptor('MON_HW',
+    (CLASS_MON, MSG_MON_HW): UBloxDescriptor('MON_HW',
                                                   '<IIIIHHBBBBIB25BHIII',
                                                   ['pinSel', 'pinBank', 'pinDir', 'pinVal', 'noisePerMS', 'agcCnt', 'aStatus',
 						   'aPower', 'flags', 'reserved1', 'usedMask',
 						   'VP[25]',
 						   'jamInd', 'reserved3', 'pinInq',
 						   'pullH', 'pullL']),
-    (CLASS_MON, MSG_MON_HW2)    : UBloxDescriptor('MON_HW2',
+    (CLASS_MON, MSG_MON_HW2): UBloxDescriptor('MON_HW2',
                                                   '<bBbBB3BI8BI4B',
                                                   ['ofsI', 'magI', 'ofsQ', 'magQ', 'cfgSource', 'reserved1[3]',
                                                    'lowLevCfg', 'reserved2[8]', 'postStatus', 'reserved3[4]']),
-    (CLASS_MON, MSG_MON_SCHD)   : UBloxDescriptor('MON_SCHD',
+    (CLASS_MON, MSG_MON_SCHD): UBloxDescriptor('MON_SCHD',
                                                   '<IIIIHHHBB',
                                                   ['tskRun', 'tskSchd', 'tskOvrr', 'tskReg', 'stack',
                                                    'stackSize', 'CPUIdle', 'flySly', 'ptlSly']),
-    (CLASS_MON, MSG_MON_VER)    : UBloxDescriptor('MON_VER',
+    (CLASS_MON, MSG_MON_VER): UBloxDescriptor('MON_VER',
                                                   '<30s10s,30s',
                                                   ['swVersion', 'hwVersion', 'romVersion'],
                                                   '_remaining',
                                                   '30s',
                                                   ['extension']),
-    (CLASS_TIM, MSG_TIM_TP)     : UBloxDescriptor('TIM_TP',
+    (CLASS_TIM, MSG_TIM_TP): UBloxDescriptor('TIM_TP',
                                                   '<IIiHBB',
                                                   ['towMS', 'towSubMS', 'qErr', 'week', 'flags', 'reserved1']),
-    (CLASS_TIM, MSG_TIM_TM2)    : UBloxDescriptor('TIM_TM2',
+    (CLASS_TIM, MSG_TIM_TM2): UBloxDescriptor('TIM_TM2',
                                                   '<BBHHHIIIII',
                                                   ['ch', 'flags', 'count', 'wnR', 'wnF', 'towMsR', 'towSubMsR',
                                                    'towMsF', 'towSubMsF', 'accEst']),
-    (CLASS_TIM, MSG_TIM_SVIN)   : UBloxDescriptor('TIM_SVIN',
+    (CLASS_TIM, MSG_TIM_SVIN): UBloxDescriptor('TIM_SVIN',
                                                   '<IiiiIIBBH',
                                                   ['dur', 'meanX', 'meanY', 'meanZ', 'meanV',
                                                    'obs', 'valid', 'active', 'reserved1']),
-    (CLASS_INF, MSG_INF_ERROR)  : UBloxDescriptor('INF_ERR', '<18s', ['str']),
-    (CLASS_INF, MSG_INF_DEBUG)  : UBloxDescriptor('INF_DEBUG', '<18s', ['str']),
-    (CLASS_CFG, MSG_CFG_TP5)    : UBloxDescriptor('CFG_TP5', '<BBHhhIIIIiI',
+    (CLASS_INF, MSG_INF_ERROR): UBloxDescriptor('INF_ERR', '<18s', ['str']),
+    (CLASS_INF, MSG_INF_DEBUG): UBloxDescriptor('INF_DEBUG', '<18s', ['str']),
+    (CLASS_CFG, MSG_CFG_TP5): UBloxDescriptor('CFG_TP5', '<BBHhhIIIIiI',
                                                   ['tpIdx', 'version', 'reserved1', 'antCableDelay', 'rfGroupDelay',
                                                    'freqPeriod', 'freqPeriodLock', 'pulseLenRatio', 'pulseLenRatioLock',
                                                    'userConfigDelay', 'flags']),
-    (CLASS_CFG, MSG_CFG_PMS)    : UBloxDescriptor('CFG_PMS', '<BBHHH',
+    (CLASS_CFG, MSG_CFG_PMS): UBloxDescriptor('CFG_PMS', '<BBHHH',
                                                   ['version', 'powerSetupValue', 'period', 'onTime', 'reserved1']),
 }
 
@@ -653,11 +653,11 @@ if sys.version_info < (3,):
 
         def msg_class(self):
             '''return the message class'''
-            return ord(self._buf[2])
+            return (self._buf[2])
 
         def msg_id(self):
             '''return the message id within the class'''
-            return ord(self._buf[3])
+            return (self._buf[3])
 
         def msg_type(self):
             '''return the message type tuple (class, id)'''
@@ -670,9 +670,9 @@ if sys.version_info < (3,):
 
         def valid_so_far(self):
             '''check if the message is valid so far'''
-            if len(self._buf) > 0 and ord(self._buf[0]) != PREAMBLE1:
+            if len(self._buf) > 0 and (self._buf[0]) != PREAMBLE1:
                 return False
-            if len(self._buf) > 1 and ord(self._buf[1]) != PREAMBLE2:
+            if len(self._buf) > 1 and (self._buf[1]) != PREAMBLE2:
                 self.debug(1, "bad pre2")
                 return False
             if self.needed_bytes() == 0 and not self.valid():
@@ -700,7 +700,10 @@ if sys.version_info < (3,):
             ck_a = 0
             ck_b = 0
             for i in data:
-                ck_a = (ck_a + ord(i)) & 0xFF
+                if type(i) is str:
+                    ck_a = (ck_a + ord(i)) & 0xFF
+                else:
+                    ck_a = (ck_a + i) & 0xFF
                 ck_b = (ck_b + ck_a) & 0xFF
             return (ck_a, ck_b)
 
@@ -970,18 +973,20 @@ class UBlox:
             try:
                 return self.dev.recv(n)
             except socket.error as e:
-                return ''
+                return b''
         return self.dev.read(n)
 
     def send_nmea(self, msg):
         if not self.read_only:
             s = msg + "*%02X" % self.nmea_checksum(msg)
+            b = bytearray()
+            b.extend(map(ord, s))
             self.write(s)
 
     def set_binary(self):
         '''put a UBlox into binary mode using a NMEA string'''
         if not self.read_only:
-            print("try set binary at %u" % self.baudrate)
+            print(("try set binary at %u" % self.baudrate))
             self.send_nmea("$PUBX,41,0,0007,0001,%u,0" % self.baudrate)
             self.send_nmea("$PUBX,41,1,0007,0001,%u,0" % self.baudrate)
             self.send_nmea("$PUBX,41,2,0007,0001,%u,0" % self.baudrate)
@@ -1069,6 +1074,8 @@ class UBlox:
         '''send a ublox message with class, id and payload'''
         msg = UBloxMessage()
         msg._buf = struct.pack('<BBBBH', 0xb5, 0x62, msg_class, msg_id, len(payload))
+        if type(payload) is str:
+            payload = bytes(payload, 'ascii')
         msg._buf += payload
         (ck_a, ck_b) = msg.checksum(msg._buf[2:])
         msg._buf += struct.pack('<BB', ck_a, ck_b)

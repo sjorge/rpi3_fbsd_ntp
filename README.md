@@ -12,3 +12,7 @@ Software used:
 - NTPd
 - ser2net
 - ublox.py with modifications from https://github.com/tridge/pyUblox
+
+```bash
+pkg install git screen py39-pyserial ser2net
+```
