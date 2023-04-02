@@ -1,0 +1,26 @@
+## bootstrap freebsd
+arm_64bit=1
+arm_control=0x200
+device_tree_address=0x4000
+kernel=u-boot-hack.bin
+
+## device tree configuration
+# default freebsd config
+dtparam=audio=on,i2c_arm=on,spi=on
+dtoverlay=mmc
+dtoverlay=pwm
+dtoverlay=disable-bt
+
+# enable pps (pin 18)
+dtoverlay=pps-gpio,gpiopin=18
+
+# enable rtc
+dtoverlay=i2c-rtc,pcf8523
+
+## configure gpu
+# memory
+gpu_mem=16
+
+# uart tweaks
+enable_uart=1
+init_uart_baud=9600
